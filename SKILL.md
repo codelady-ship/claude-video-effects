@@ -99,5 +99,6 @@ Aliases work too: `bill`, `to-do`, `follow`, `stamp`, `countdown`, `cover`, `rai
 - Never cover the face. Everything either goes behind the person or avoids the face by itself; if a check frame still shows text over the face, move it (`x`, `y`) or shorten the text.
 - Effects run in the order listed. Put camera effects (`locked-on`, `lean-in`, `spotlight`) first when they overlap others.
 - Zoom never goes past 2x, so the video stays sharp.
+- Azerbaijani (Ə, Ğ, İ, Ş) and Russian text work: if a font has no glyph for the text, `fx.py` swaps in Montserrat or Playfair Display and prints a line saying so.
 - This skill adds visuals only. Sound effects and captions are up to the user (CapCut works well).
 - These are starter versions. Be honest about that if the user compares them to a reel they saw.
