@@ -57,6 +57,23 @@ def rgb(v, default):
     v = str(v).lstrip('#'); return tuple(int(v[i:i + 2], 16) for i in (0, 2, 4))
 
 
+# Archivo Black, Instrument Serif and Permanent Marker have no Azerbaijani Ə/ə and no Cyrillic
+# (Permanent Marker also lacks Ğ ğ İ Ş ş). If the plan's text needs them, swap in a font that has them.
+NO_GLYPHS = {'bold': 'Əə', 'serif': 'Əə', 'hand': 'ƏəĞğİŞş'}
+STAND_IN = {'bold': 'montb', 'serif': 'didonei', 'hand': 'montb'}
+
+
+def use_stand_in_fonts(plan):
+    s = ''.join(str(v) for d in plan for v in d.values() if isinstance(v, str))
+    cyrillic = any('Ѐ' <= ch <= 'ӿ' for ch in s)
+    for kind, missing in NO_GLYPHS.items():
+        if cyrillic or any(ch in s for ch in missing):
+            alt = STAND_IN[kind]
+            FONT[kind] = FONT[alt]
+            if alt in WGHT: WGHT[kind] = WGHT[alt]
+            print(f"Font '{kind}' has no glyphs for this text, using '{alt}' instead.", flush=True)
+
+
 _fc = {}
 def font(kind, size):
     k = (kind, int(size))
@@ -2188,6 +2205,7 @@ def main():
         d['fx'] = ALIASES.get(d['fx'].lower().lstrip('/'), d['fx'].lower().lstrip('/'))
         if d['fx'] in LOOK_NAMES: d['fx'], look = LOOK_NAMES[d['fx']]; d.setdefault('look', look)
         if d['fx'] not in EFFECTS: sys.exit(f"Unknown effect '{d['fx']}'. Run --list to see all {len(EFFECTS)}.")
+    use_stand_in_fonts(plan)
     fr, fps, dur, sw, sh = probe(src)
     for d in plan: d['end'] = min(float(d['end']), dur)
     if sw <= sh: W = a.width; H = int(round(a.width * sh / sw / 2)) * 2
